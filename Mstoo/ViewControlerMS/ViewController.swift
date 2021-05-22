@@ -8,6 +8,8 @@
 
 import UIKit
 import CoreLocation
+import GoogleMobileAds
+import GooglePlacesSearchController
 
 class BannerModel: NSObject
 {
@@ -90,7 +92,7 @@ class homeViewPostCell: UICollectionViewCell
 
 }
 
-class ViewController: UIViewController,UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,UISearchBarDelegate,CLLocationManagerDelegate
+class ViewController: UIViewController,UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,UISearchBarDelegate,CLLocationManagerDelegate,GADInterstitialDelegate,GooglePlacesAutocompleteViewControllerDelegate
 {
 
     lazy  var searchBar:UISearchBar = UISearchBar(frame: CGRect(x: 0, y: 0, width: 200, height: 20))
@@ -109,7 +111,15 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
 
     var bannerArr = [BannerModel]()
     var postsArr = [PostsModel]()
-
+    var mInterstitial: GADInterstitial!
+    let textViewRecognizer = UITapGestureRecognizer()
+    var count = Int()
+    var timer = Timer()
+    let googlePlacesKey = "AIzaSyBq16ekrXE3LHeDIwu3KDk0O9s-rMjZpqc"
+       lazy var placesSearchController: GooglePlacesSearchController = {
+       let controller = GooglePlacesSearchController(delegate: self,apiKey: googlePlacesKey,placeType: .address)
+           return controller
+       }()
     override func viewDidLoad()     {
         super.viewDidLoad()
         
@@ -120,15 +130,69 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
         searchBar.delegate = self
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.refreshFitlerData), name: NSNotification.Name(rawValue:ConstantGlobal.Notifier.refreshPost), object: nil)
-        
+      
+
         getLocation()
+        showAdmobInterstitial()
     }
-    
+    //MARK:- ---GOOGLE ADS---
+    func showAdmobInterstitial()
+    {
+            let kGoogleFullScreenAppUnitID = "ca-app-pub-3940256099942544/4411468910"
+            self.mInterstitial = GADInterstitial.init(adUnitID:kGoogleFullScreenAppUnitID )
+            mInterstitial.delegate = self
+            let Request  = GADRequest()
+      //  Request.testDevices = ["2077ef9a63d2b398840261c8221a0c9b"]
+        mInterstitial.load(Request)
+    }
+    //MARK:- -----GOOGLE PLACES----
+    func viewController(didAutocompleteWith place: PlaceDetails) {
+           print(place.description)
+           print(place.formattedAddress)
+           self.searchBar.text = place.formattedAddress
+           print(place.coordinate!.latitude)
+           print(place.countryCode)
+           print(place.postalCode)
+//           country = place.country ?? ""
+//           countryCode = place.countryCode ?? ""
+//           state = place.administrativeArea ?? ""
+//           city = place.locality ?? ""
+           latitude = (place.coordinate!.latitude)
+        longitude = (place.coordinate!.longitude)
+//          lat  = String(latitude)
+//          long  = String(longitud)
+//        latitude = location.latitude
+//        longitude = location.longitude
+     //
+          placesSearchController.isActive = false
+        getAllPosts()
+       // self.placesSearchController.dismiss(animated: true, completion: nil)
+       }
+    override func viewDidDisappear(_ animated: Bool) {
+        timer.invalidate()
+    }
+    @objc func timerAction() {
+        if(count > 0) {
+            count -= 1
+            print("\(count) seconds to the end of the world")
+        }
+        else{
+           timer.invalidate()
+            timer.fire()
+            showAdmobInterstitial()
+            count = 180
+            timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
+        }
+    }
+
+    func interstitialDidReceiveAd(_ ad: GADInterstitial)
+    {
+        ad.present(fromRootViewController: self)
+    }
     @objc func refreshFitlerData() {
         self.postsArr = HelperFitler.shared.arryPosts
         self.allPostCollection.reloadData()
     }
-    
     
     func checkUser(){
         if let _ = UserDefaults.standard.string(forKey: "checkUserLogin")  {
@@ -148,12 +212,14 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
             {
                 locationManager.startUpdatingLocation()
             }
-        
     }
 
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
+        timer.fire()
+        count = 180
+        timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
         
         self.navigationController?.isNavigationBarHidden = false
             checkUser()
@@ -355,8 +421,9 @@ extension ViewController
 {
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar)
     {
-        self.searchBar.showsCancelButton = false
-        searchBar.resignFirstResponder()
+//        self.searchBar.showsCancelButton = false
+//        searchBar.resignFirstResponder()
+        present(placesSearchController, animated: true, completion: nil)
     }
 }
 

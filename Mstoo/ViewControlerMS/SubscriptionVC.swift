@@ -11,10 +11,19 @@ import Razorpay
 
 class subscriptionCell: UICollectionViewCell
 {
+    
+    @IBOutlet weak var lblFeaturedAds: UILabel!
+    @IBOutlet weak var lblFreeAds: UILabel!
+    @IBOutlet weak var subscriptionView: UIView!
     @IBOutlet weak var titleLbl: UILabel!
     @IBOutlet weak var priceLbl: UILabel!
     @IBOutlet weak var descLbl: UILabel!
     @IBOutlet weak var subscribeBtn: UIButton!
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        subscriptionView.layer.configureGradientBackground(UIColor(red: 99.0/255.0, green: 40.0/255.0, blue: 183.0/255.0, alpha: 1.0).cgColor, UIColor(red: 240.0/255.0, green: 0.0/255.0, blue: 135.0/255.0, alpha: 1.0).withAlphaComponent(1).cgColor, view: subscriptionView)
+        
+    }
 }
 
 class packageModel: NSObject
@@ -56,6 +65,7 @@ class SubscriptionVC: UIViewController,UICollectionViewDataSource,UICollectionVi
      
         razorpay = RazorpayCheckout.initWithKey(razorpayKey, andDelegate: self)
         _ = Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(scrollToNextCell), userInfo: nil, repeats: true)
+        pageControl.numberOfPages = 3
         
         self.getPackages()
     }
@@ -194,15 +204,20 @@ extension SubscriptionVC
     {
         return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
     }
-    
+   
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
         let cellID = "subscriptionCell"
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath as IndexPath) as! subscriptionCell
         
         cell.titleLbl.text = packageData[indexPath.row].name
-        cell.priceLbl.text = packageData[indexPath.row].price
+        cell.priceLbl.text = "Rs.\(packageData[indexPath.row].price)"
         cell.descLbl.text =  packageData[indexPath.row].desc
+        let json = packageData[indexPath.row].desc.parseJSONString as! [Any]
+        print("Parsed JSON: \(json[0])")
+        cell.descLbl.text! = "\(json[0])"
+        cell.lblFreeAds.text! = "\(json[1])"
+        cell.lblFeaturedAds.text! = "\(json[2])"
 
         cell.subscribeBtn.addTarget(self, action: #selector(subscriptionAction), for: .touchUpInside)
 
@@ -212,6 +227,7 @@ extension SubscriptionVC
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath)
     {
     }
+  
 }
 
 extension SubscriptionVC
@@ -282,3 +298,51 @@ extension SubscriptionVC
         })
     }
 }
+extension CALayer {
+    public func configureGradientBackground(_ colors:CGColor..., view:UIView){
+        let gradient = CAGradientLayer()
+        gradient.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
+       gradient.startPoint = CGPoint(x: 0.0, y: 1.0)
+       gradient.endPoint = CGPoint(x: 1.0, y: 1.0)
+        gradient.colors = colors
+        gradient.masksToBounds = true
+        //gradient.locations = [0.0, 0.25, 0.75, 1.0]
+        self.insertSublayer(gradient, at: 0)
+    }
+}
+extension String
+    {
+        var parseJSONString: AnyObject?
+        {
+            let data = self.data(using: String.Encoding.utf8, allowLossyConversion: false)
+
+            if let jsonData = data
+            {
+                // Will return an object or nil if JSON decoding fails
+                do
+                {
+                    let message = try JSONSerialization.jsonObject(with: jsonData, options:.mutableContainers)
+                    if let jsonResult = message as? NSMutableArray
+                    {
+                        print(jsonResult)
+
+                        return jsonResult //Will return the json array output
+                    }
+                    else
+                    {
+                        return nil
+                    }
+                }
+                catch let error as NSError
+                {
+                    print("An error occurred: \(error)")
+                    return nil
+                }
+            }
+            else
+            {
+                // Lossless conversion of the string was not possible
+                return nil
+            }
+        }
+    }
