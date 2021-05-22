@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_0" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="ViewLoader" customModule="POS_LITE" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="450" height="641"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TMb-tQ-DQ7">
+                    <rect key="frame" x="0.0" y="0.0" width="450" height="641"/>
+                    <subviews>
+                        <button hidden="YES" opaque="NO" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GPp-FF-dXd">
+                            <rect key="frame" x="400" y="0.0" width="50" height="50"/>
+                            <constraints>
+                                <constraint firstAttribute="width" secondItem="GPp-FF-dXd" secondAttribute="height" multiplier="1:1" id="ZsQ-0H-UjQ"/>
+                                <constraint firstAttribute="width" constant="50" id="p9f-9o-ByP">
+                                    <variation key="heightClass=regular-widthClass=regular" constant="70"/>
+                                </constraint>
+                            </constraints>
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <state key="normal" image="close_small"/>
+                            <connections>
+                                <action selector="cancelButtonAction:" destination="iN0-l3-epB" eventType="touchUpInside" id="tCb-8x-Eab"/>
+                            </connections>
+                        </button>
+                        <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Loading..." textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aEW-KG-73O">
+                            <rect key="frame" x="184.5" y="358" width="81.5" height="25"/>
+                            <fontDescription key="fontDescription" name="AvenirNext-MediumItalic" family="Avenir Next" pointSize="18"/>
+                            <nil key="highlightedColor"/>
+                            <variation key="heightClass=regular-widthClass=regular">
+                                <fontDescription key="fontDescription" name="AvenirNext-MediumItalic" family="Avenir Next" pointSize="22"/>
+                            </variation>
+                        </label>
+                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="6ab-IO-NeX">
+                            <rect key="frame" x="207" y="302" width="37" height="37"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                        </activityIndicatorView>
+                    </subviews>
+                    <color key="backgroundColor" red="0.68617147842639592" green="0.68617147842639592" blue="0.68617147842639592" alpha="0.078954409246575347" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="trailing" secondItem="GPp-FF-dXd" secondAttribute="trailing" id="8Ep-cA-WHB"/>
+                        <constraint firstItem="GPp-FF-dXd" firstAttribute="top" secondItem="TMb-tQ-DQ7" secondAttribute="top" id="Y4Z-vt-DXI"/>
+                        <constraint firstItem="aEW-KG-73O" firstAttribute="centerY" secondItem="TMb-tQ-DQ7" secondAttribute="centerY" constant="50" id="fO7-Jf-m3F"/>
+                        <constraint firstItem="aEW-KG-73O" firstAttribute="centerX" secondItem="TMb-tQ-DQ7" secondAttribute="centerX" id="oHF-cR-514"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.5" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="TMb-tQ-DQ7" secondAttribute="trailing" id="6dO-dX-iGo"/>
+                <constraint firstItem="TMb-tQ-DQ7" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="DzC-Gq-ohe"/>
+                <constraint firstAttribute="bottom" secondItem="TMb-tQ-DQ7" secondAttribute="bottom" id="EiQ-dP-Fvk"/>
+                <constraint firstItem="TMb-tQ-DQ7" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="hKM-Oe-ozr"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="activityIndicator" destination="6ab-IO-NeX" id="yuU-nM-gqw"/>
+                <outlet property="btnCross" destination="GPp-FF-dXd" id="uag-Hq-T8n"/>
+                <outlet property="cancelButton" destination="GPp-FF-dXd" id="vkq-DH-21L"/>
+                <outlet property="titleLabel" destination="aEW-KG-73O" id="wPB-26-eSc"/>
+            </connections>
+            <point key="canvasLocation" x="-53" y="33"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="close_small" width="16" height="16"/>
+    </resources>
+</document>
