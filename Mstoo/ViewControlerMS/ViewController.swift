@@ -49,6 +49,9 @@ class PostsModel: NSObject
     var email: String = ""
     var postImages = NSArray()
     var mobile = ""
+    var isFavourite = false
+    var price = "0"
+    
     override init()
     {
     }
@@ -78,6 +81,22 @@ class PostsModel: NSObject
         postImages = dict.value(forKey: "postImages") as! NSArray
         print("postImages",postImages)
         mobile = dict.getStringValue(key: "mobile")
+        
+        if dict.getStringValue(key: "isFavourite") == "0" {
+            isFavourite = false
+        }else{
+            isFavourite = true
+        }
+        
+        if fixPrice != "" {
+            self.price  = fixPrice
+        }else if perDay != "" {
+            self.price  = perDay
+        }else if perWeek != "" {
+            self.price  = perWeek
+        }else if perMonth != "" {
+            self.price  = perMonth
+        }
     }
 }
 
@@ -87,7 +106,38 @@ class homeViewPostCell: UICollectionViewCell
     @IBOutlet weak var dealTitle: UILabel!
     @IBOutlet weak var dealPrice: UILabel!
     @IBOutlet weak var dealTime: UILabel!
+    @IBOutlet var btnHeart: UIButton!
 
+    var postDetail = PostsModel()
+    
+    func setValues(){
+        let replacedString = (self.postDetail.postImage).replacingOccurrences(of: " ", with: "%20")
+        let url = URL(string: replacedString)
+        
+        self.dealImage.sd_setImage(with: url, placeholderImage: #imageLiteral(resourceName: "place_holder"))
+        self.dealTitle.text = postDetail.title
+        self.dealTime.text = postDetail.desc
+        self.dealPrice.text = "Rs " + postDetail.price
+        
+    }
+    
+    @IBAction func tapHeart(_ sender: Any) {
+        
+        HelperApp.shared.addToFavroite(postId: postDetail.id) { (success) in
+            if success {
+                if self.postDetail.isFavourite {
+                    self.postDetail.isFavourite = false
+                    self.btnHeart.imageTintColor(color: .gray)
+                }else{
+                    self.postDetail.isFavourite = true
+                    self.btnHeart.imageTintColor(color: .red)
+                }
+            }
+            
+        }
+        
+    }
+    
 }
 
 class ViewController: UIViewController,UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,UISearchBarDelegate,CLLocationManagerDelegate
@@ -296,16 +346,19 @@ extension ViewController
             let cellID = "homeViewPostCell"
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath as IndexPath) as! homeViewPostCell
             
-            let replacedString = (self.postsArr[indexPath.row].postImage).replacingOccurrences(of: " ", with: "%20")
-            let url = URL(string: replacedString)
-            cell.dealImage.sd_setImage(with: url, placeholderImage: #imageLiteral(resourceName: "place_holder"))
-            cell.dealTitle.text = self.postsArr[indexPath.row].title
-            cell.dealPrice.text = "Rs " + self.postsArr[indexPath.row].fixPrice
-            cell.dealTime.text = self.postsArr[indexPath.row].desc
+            cell.postDetail = self.postsArr[indexPath.row]
+            cell.setValues()
+            
 
             cell.backgroundColor = UIColor.white
             cell.contentView.layer.cornerRadius = 10.0
-
+            
+            if self.postsArr[indexPath.row].isFavourite {
+                cell.btnHeart.imageTintColor(color: UIColor.red)
+            }else{
+                cell.btnHeart.imageTintColor(color: UIColor.lightGray)
+            }
+            
             return cell
         }
     }
@@ -338,7 +391,8 @@ extension ViewController
     {
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
         let nextViewController = storyBoard.instantiateViewController(withIdentifier: "MyPostsVC") as! MyPostsVC
-            nextViewController.modalPresentationStyle = .fullScreen
+        nextViewController.modalPresentationStyle = .fullScreen
+        nextViewController.postType = .mypost
         self.present(nextViewController, animated: true, completion: nil)
     }
     

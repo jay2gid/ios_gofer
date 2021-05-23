@@ -96,6 +96,7 @@ class ChatVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UITe
         self.fetchData()
         NotificationCenter.default.addObserver(self, selector: #selector(self.bookingview(notification:)), name: Notification.Name("stoploading"), object: nil)
         
+        inputTextField.textColor = ConstantGlobal.Color.DarkBlack
     }
     @IBAction func backbtn(_ sender: Any)
     {
@@ -239,7 +240,9 @@ class ChatVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UITe
         case .receiver:
             let cell = tableView.dequeueReusableCell(withIdentifier: "Receiver", for: indexPath) as! ReceiverCell
             cell.clearCellData()
-//            cell.profilePic? .sd_setImage(with: URL(string: "\(defaults.value(forKey: koriginal)!)"), placeholderImage: UIImage (named: "dummy_profile"),options: .refreshCached, completed: { image, error, cacheType, imageURL in
+
+            
+//          cell.profilePic? .sd_setImage(with: URL(string: "\(defaults.value(forKey: koriginal)!)"), placeholderImage: UIImage (named: "dummy_profile"),options: .refreshCached, completed: { image, error, cacheType, imageURL in
 //                if (error != nil) {
 //                    cell.profilePic?.image = UIImage (named: "dummy_profile")
 //                } else {
@@ -250,6 +253,7 @@ class ChatVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UITe
             {
             case .text:
                 cell.message.text = self.items[indexPath.row].content as? String
+                
                 cell.timelabel.text = "\(self.getDateFromTimeStamp(timeStamp: Double(self.items[indexPath.row].timestamp)))"
 
                 print(self.items[indexPath.row].content as! String)

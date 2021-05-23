@@ -8,15 +8,31 @@
 
 import UIKit
 
+enum PostListType {
+    case mypost,favorite,feture
+}
+
 class MyPostsVC: UIViewController,UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout {
     @IBOutlet weak var allPostCollection: UICollectionView!
     var postsArr = [PostsModel]()
 
+    @IBOutlet var btnTitle: UIButton!
+    
+    var postType = PostListType.mypost
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.MyPostsVC()
         
         // Do any additional setup after loading the view.
+        
+        if postType == .mypost {
+            self.btnTitle.setTitle("My Posts", for: .normal)
+        }
+        
+        if postType == .favorite {
+            self.btnTitle.setTitle("My Favourites", for: .normal)
+        }
     }
     
     @IBAction func back(_ sender: Any)
@@ -38,12 +54,19 @@ class MyPostsVC: UIViewController,UICollectionViewDataSource,UICollectionViewDel
 
 extension MyPostsVC
 {
-    func MyPostsVC()
-    {
+    func MyPostsVC() {
 
         var userDict = [String : Any]()
         userDict["user_id"] = (defaults.value(forKey: "userId")!)
-        ServiceHelper.request(params: userDict, method: .post, baseWebUrl:baseUrl , useToken: "no" , apiName: getMyPostsUrl , hudType: loadingIndicatorType.iLoader)
+        
+        var url = ""
+        if self.postType == .mypost {
+            url = getMyPostsUrl
+        }else if self.postType == .favorite {
+            url = getFavoritePost
+        }
+        
+        ServiceHelper.request(params: userDict, method: .post, baseWebUrl:baseUrl , useToken: "no" , apiName: url , hudType: loadingIndicatorType.iLoader)
         { (response, error, responseCode) in
             if (error == nil)
             {
@@ -73,8 +96,9 @@ extension MyPostsVC
             }
         }
     }
-    func showToast(message : String)
-    {
+    
+    func showToast(message : String) {
+        
         let toastLabel = UILabel(frame: CGRect(x: self.view.frame.size.width/2 - 75, y: self.view.frame.size.height-100, width: 150, height: 35))
         toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.6)
         toastLabel.textColor = UIColor.white
@@ -111,31 +135,24 @@ extension MyPostsVC
             return CGSize(width: ((width / 2) - 10), height: 170.0)
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
-    {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cellID = "homeViewPostCell"
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath as IndexPath) as! homeViewPostCell
         
-        let replacedString = (self.postsArr[indexPath.row].postImage).replacingOccurrences(of: " ", with: "%20")
-        let url = URL(string: replacedString)
-        cell.dealImage.sd_setImage(with: url, placeholderImage: #imageLiteral(resourceName: "place_holder"))
-        cell.dealTitle.text = self.postsArr[indexPath.row].title
-        cell.dealPrice.text = self.postsArr[indexPath.row].fixPrice
-        cell.dealTime.text = self.postsArr[indexPath.row].desc
-
+        cell.postDetail = self.postsArr[indexPath.row]
+        cell.setValues()
         cell.backgroundColor = UIColor.white
         cell.contentView.layer.cornerRadius = 10.0
 
         return cell
     }
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath)
-    {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "DetailPageVC") as? DetailPageVC
         vc?.singlePostData = self.postsArr
         vc?.rowno = indexPath.row
         vc?.modalPresentationStyle = .fullScreen
         self.present(vc!, animated: true, completion: nil)
-        //self.navigationController?.pushViewController(vc!, animated: true)
+        // self.navigationController?.pushViewController(vc!, animated: true)
     }
 }

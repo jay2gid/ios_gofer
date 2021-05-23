@@ -32,13 +32,7 @@ class HelperFitler: NSObject {
         subCatId = ""
     }
     
-    /*
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func draw(_ rect: CGRect) {
-        // Drawing code
-    }
-    */
+    
     
     func getCategories(completion:@escaping (_ _success:Bool)->()) {
         
@@ -91,9 +85,6 @@ class HelperFitler: NSObject {
     
     func getAllPosts(completion:@escaping (_ _success:Bool)->()){
         
-//        let latStr: String = String(format: "%.4f", latitude!)
-//        let lonStr: String = String(format: "%.4f", longitude!)
-
         var params = [String : Any]()
 //        userDict["latitude"] = latStr
 //        userDict["longitude"] = lonStr
@@ -113,15 +104,7 @@ class HelperFitler: NSObject {
             params["filters[category_id]"] = self.catId
         }
         
-//        latitude:
-//        longitude:
-//        user_id:2
-//        filters[title]:mukltipart
-//        filters[description]:test
-//        filters[category_id]:1
-//        filters[sub_category_id]:1
-//        filters[location_name]:Jagroan
-        
+
         ServiceHelper.request(params: params, method: .post, baseWebUrl:baseUrl , useToken: "no" , apiName: getAllPostsUrl , hudType: loadingIndicatorType.iLoader)
         { (response, error, responseCode) in
             if (error == nil)
@@ -164,4 +147,9 @@ class HelperFitler: NSObject {
         }
     }
 
+    
+    
+    
+    
+    
 }

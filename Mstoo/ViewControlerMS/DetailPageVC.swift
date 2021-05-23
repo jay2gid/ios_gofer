@@ -198,8 +198,7 @@ class DetailPageVC: UIViewController,UICollectionViewDelegate, UICollectionViewD
         self.dismiss(animated: true, completion: nil)
     }
     
-    @IBAction func chatAction(_ sender: Any)
-    {
+    @IBAction func chatAction(_ sender: Any) {
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
         let nextViewController = storyBoard.instantiateViewController(withIdentifier: "ChatVC") as! ChatVC
         nextViewController.senderuserid = postDetail.firebase_id
@@ -272,12 +271,10 @@ extension DetailPageVC
             
             let cellID = "homeViewPostCell"
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath as IndexPath) as! homeViewPostCell
-            let replacedString = self.postsArr[indexPath.row].postImage
-            let url = URL(string: replacedString)
-            cell.dealImage.sd_setImage(with: url, placeholderImage: #imageLiteral(resourceName: "place_holder"))
-            cell.dealTitle.text = self.postsArr[indexPath.row].title
-            cell.dealPrice.text = self.postsArr[indexPath.row].fixPrice
-            cell.dealTime.text = self.postsArr[indexPath.row].desc
+            
+            cell.postDetail = self.postsArr[indexPath.row]
+            cell.setValues()
+            
             cell.backgroundColor = UIColor.clear
             cell.contentView.layer.cornerRadius = 10.0
             cell.dealImage.layer.cornerRadius = 10.0

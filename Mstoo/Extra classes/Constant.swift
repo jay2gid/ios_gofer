@@ -22,6 +22,7 @@ let registerUrl = "auth/signup"
 let updateProfileUrl = "auth/user/profile/edit"
 let getAllPostsUrl = "post"
 let getMyPostsUrl = "post/user"
+let getFavoritePost = "post/favourite/list"
 let getProfileUrl = "user/profile"
 let changePasswordUrl = "auth/password/change"
 let getInfoPagesUrl = "cms/pages"
@@ -39,6 +40,8 @@ var kusername = "kusername"
 var kuseremail = "kuseremail"
 var kfirebaseid = "firebaseid"
 let koriginal = "koriginal"
+
+let addFavorite = "post/favourite/add"
 
 
 

@@ -71,6 +71,14 @@ extension UIButton {
             return UIColor(cgColor: color)
         }
     }
+    
+    
+    func imageTintColor(color:UIColor) {
+        let origImage = self.imageView?.image
+        let tintedImage = origImage?.withRenderingMode(.alwaysTemplate)
+        self.setImage(tintedImage, for: .normal)
+        self.tintColor = color
+    }
 }
 
 

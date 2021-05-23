@@ -94,8 +94,6 @@
 		FA09C62C2656D5FB00752CF8 /* ViewCellHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA09C62B2656D5FB00752CF8 /* ViewCellHeader.xib */; };
 		FA76AEA92656ADF700B74B94 /* VCFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA76AEA72656ADF700B74B94 /* VCFilter.swift */; };
 		FA76AEAA2656ADF700B74B94 /* VCFilter.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA76AEA82656ADF700B74B94 /* VCFilter.xib */; };
-		FA8827E72658E54900A03F5D /* VCImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA8827E52658E54900A03F5D /* VCImages.swift */; };
-		FA8827E82658E54900A03F5D /* VCImages.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA8827E62658E54900A03F5D /* VCImages.xib */; };
 		FA8828132658FA2300A03F5D /* HelperApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA8828122658FA2300A03F5D /* HelperApp.swift */; };
 		FA9AA2162656D9EB0085FE68 /* HelperFitler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9AA2152656D9EB0085FE68 /* HelperFitler.swift */; };
 		FA9AA2382656DABD0085FE68 /* FreeExtention.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9AA2372656DABD0085FE68 /* FreeExtention.swift */; };
@@ -210,8 +208,6 @@
 		FA09C62B2656D5FB00752CF8 /* ViewCellHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ViewCellHeader.xib; sourceTree = "<group>"; };
 		FA76AEA72656ADF700B74B94 /* VCFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCFilter.swift; sourceTree = "<group>"; };
 		FA76AEA82656ADF700B74B94 /* VCFilter.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = VCFilter.xib; sourceTree = "<group>"; };
-		FA8827E52658E54900A03F5D /* VCImages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCImages.swift; sourceTree = "<group>"; };
-		FA8827E62658E54900A03F5D /* VCImages.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = VCImages.xib; sourceTree = "<group>"; };
 		FA8828122658FA2300A03F5D /* HelperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelperApp.swift; sourceTree = "<group>"; };
 		FA9AA2152656D9EB0085FE68 /* HelperFitler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelperFitler.swift; sourceTree = "<group>"; };
 		FA9AA2372656DABD0085FE68 /* FreeExtention.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeExtention.swift; sourceTree = "<group>"; };
@@ -368,10 +364,8 @@
 		FA09C61D2656C30F00752CF8 /* Cell */ = {
 			isa = PBXGroup;
 			children = (
-				FA09C61E2656C33000752CF8 /* CellFilter.swift */,
-				FA09C61F2656C33000752CF8 /* CellFilter.xib */,
-				FA09C6292656D5F100752CF8 /* ViewCellHeader.swift */,
-				FA09C62B2656D5FB00752CF8 /* ViewCellHeader.xib */,
+				FA88281A26596D4100A03F5D /* Cell */,
+				FA88281B26596D5600A03F5D /* ViewHeader */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -423,20 +417,36 @@
 		FA76AEA62656ADD600B74B94 /* CustomVC */ = {
 			isa = PBXGroup;
 			children = (
-				FA8C5E402656C220002E2DA4 /* Filter */,
 				FA9AA2152656D9EB0085FE68 /* HelperFitler.swift */,
-				FA8827E52658E54900A03F5D /* VCImages.swift */,
-				FA8827E62658E54900A03F5D /* VCImages.xib */,
+				FA8C5E402656C220002E2DA4 /* Filter */,
 			);
 			path = CustomVC;
+			sourceTree = "<group>";
+		};
+		FA88281A26596D4100A03F5D /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				FA09C61E2656C33000752CF8 /* CellFilter.swift */,
+				FA09C61F2656C33000752CF8 /* CellFilter.xib */,
+			);
+			path = Cell;
+			sourceTree = "<group>";
+		};
+		FA88281B26596D5600A03F5D /* ViewHeader */ = {
+			isa = PBXGroup;
+			children = (
+				FA09C6292656D5F100752CF8 /* ViewCellHeader.swift */,
+				FA09C62B2656D5FB00752CF8 /* ViewCellHeader.xib */,
+			);
+			path = ViewHeader;
 			sourceTree = "<group>";
 		};
 		FA8C5E402656C220002E2DA4 /* Filter */ = {
 			isa = PBXGroup;
 			children = (
-				FA09C61D2656C30F00752CF8 /* Cell */,
 				FA76AEA72656ADF700B74B94 /* VCFilter.swift */,
 				FA76AEA82656ADF700B74B94 /* VCFilter.xib */,
+				FA09C61D2656C30F00752CF8 /* Cell */,
 			);
 			path = Filter;
 			sourceTree = "<group>";
@@ -512,7 +522,6 @@
 				FA76AEAA2656ADF700B74B94 /* VCFilter.xib in Resources */,
 				C94B965A24C59D0E00DD378F /* Main.storyboard in Resources */,
 				FA09C62C2656D5FB00752CF8 /* ViewCellHeader.xib in Resources */,
-				FA8827E82658E54900A03F5D /* VCImages.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -606,7 +615,6 @@
 				C94EF76D24D0C068005455D9 /* Constant.swift in Sources */,
 				C07E6C2E263325E80031F85F /* NVActivityIndicatorAnimationLineScalePulseOut.swift in Sources */,
 				FA09C6202656C33000752CF8 /* CellFilter.swift in Sources */,
-				FA8827E72658E54900A03F5D /* VCImages.swift in Sources */,
 				C937A0BB2523BF77001A10DA /* SubscriptionVC.swift in Sources */,
 				9F3746B7257F831F00CDF4A5 /* DetailPageVC.swift in Sources */,
 				C07E6C2C263325E80031F85F /* NVActivityIndicatorAnimationCircleStrokeSpin.swift in Sources */,

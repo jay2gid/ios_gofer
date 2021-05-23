@@ -43,6 +43,7 @@ class SenderCell: UITableViewCell {
         self.selectionStyle = .none
         self.message.textContainerInset = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
         self.messageBackground.layer.cornerRadius = 14
+        
         if #available(iOS 11.0, *) {
             self.messageBackground.clipsToBounds = false
             self.messageBackground.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMaxXMaxYCorner]
@@ -73,6 +74,7 @@ class ReceiverCell: UITableViewCell {
         self.selectionStyle = .none
         self.message.textContainerInset = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
         self.messageBackground.layer.cornerRadius = 14
+        
         if #available(iOS 11.0, *) {
             self.messageBackground.clipsToBounds = false
             self.messageBackground.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner]

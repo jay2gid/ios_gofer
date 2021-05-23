@@ -109,7 +109,8 @@ class UserChatListVC: UIViewController,UITableViewDataSource,UITableViewDelegate
         let profileBtn = cell?.viewWithTag(6) as? UIButton
         profileimage?.layer.cornerRadius = (profileimage?.frame.size.width)! / 2
         profileimage?.layer.masksToBounds = true
-        namelabel?.text = userlist[indexPath.row].sender_name
+        namelabel?.text = userlist[indexPath.row].reciver_name
+     
         Database.database().reference().child("message/" + "\(userlist[indexPath.row].room_id)").queryLimited(toLast: 1).observeSingleEvent(of: .value, with: { (snapshot) in
             // Get user value
             for snap in snapshot.children.allObjects as! [DataSnapshot]
