@@ -37,7 +37,8 @@ class AddPostVC: UIViewController,CLLocationManagerDelegate,UICollectionViewData
     var subCateName: String = ""
     var getCateId: String = ""
     var getSubCateId: String = ""
-
+    var fetured = 0
+    
     private var placesClient: GMSPlacesClient!
     var locationManager:CLLocationManager!
     var imagePicker:UIImagePickerController!
@@ -153,10 +154,24 @@ class AddPostVC: UIViewController,CLLocationManagerDelegate,UICollectionViewData
     }
 }
 
-extension AddPostVC
-{
-    func sendPost()
-    {
+extension AddPostVC {
+    
+    
+    func sendPostAction(){
+        let alert = UIAlertController(title: "Alert", message: "Do you want to add this post as fetured post?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { action in
+            self.fetured = 1
+            self.sendPost()
+        }))
+        alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: { action in
+            self.fetured = 0
+            self.sendPost()
+        }))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func sendPost() {
+        
         let alert = UIAlertController(title: nil, message: "Please wait...", preferredStyle: .alert)
 
         let loadingIndicator = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50))
@@ -204,7 +219,8 @@ extension AddPostVC
             "latitude" : latStr,
             "longitude" : lonStr,
             "images_count": "\(arrImages.count)",
-            "type": "normal"
+            "type": "normal",
+            "is_featured":"\(fetured)"
         ]
         
         print(params as Any)
@@ -384,7 +400,7 @@ extension AddPostVC
         let register = validateRegister(title: self.titleFld.text, amount: self.amountFld.text, youtube: self.youtubeFld.text, desc: self.descriptionView.text, fixed: self.fixed.text, permonth: self.perMonth.text, perweek: self.perWeek.text, perday: self.perDay.text)
         if register.1 == true
         {
-            self.sendPost()
+            self.sendPostAction()
         }
         else
         {
