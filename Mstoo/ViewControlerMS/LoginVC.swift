@@ -81,8 +81,8 @@ extension LoginVC
                     {
                         if getValue.boolValue
                         {
-                            self.googleBtn.isHidden = true
-                            self.fbBtn.isHidden = true
+//                            self.googleBtn.isHidden = true
+//                            self.fbBtn.isHidden = true
                         }
                         else
                         {

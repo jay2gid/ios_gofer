@@ -10,6 +10,7 @@ import UIKit
 import CoreLocation
 import GoogleMobileAds
 import GooglePlacesSearchController
+import SDWebImage
 
 class BannerModel: NSObject
 {
@@ -89,7 +90,17 @@ class homeViewPostCell: UICollectionViewCell
     @IBOutlet weak var dealTitle: UILabel!
     @IBOutlet weak var dealPrice: UILabel!
     @IBOutlet weak var dealTime: UILabel!
-
+    @IBOutlet weak var btnShare: UIButton!
+    
+}
+class FeaturedPostCell: UICollectionViewCell
+{
+    @IBOutlet weak var dealImage: UIImageView!
+    @IBOutlet weak var dealTitle: UILabel!
+    @IBOutlet weak var dealPrice: UILabel!
+    @IBOutlet weak var dealTime: UILabel!
+    @IBOutlet weak var btnShare: UIButton!
+    
 }
 
 class ViewController: UIViewController,UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,UISearchBarDelegate,CLLocationManagerDelegate,GADInterstitialDelegate,GooglePlacesAutocompleteViewControllerDelegate
@@ -111,8 +122,12 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
 
     var bannerArr = [BannerModel]()
     var postsArr = [PostsModel]()
+    var featuredArr = [PostsModel]()
     var mInterstitial: GADInterstitial!
     let textViewRecognizer = UITapGestureRecognizer()
+    
+    @IBOutlet weak var height: NSLayoutConstraint!
+    @IBOutlet weak var featuredCollection: UICollectionView!
     var count = Int()
     var timer = Timer()
     let googlePlacesKey = "AIzaSyBq16ekrXE3LHeDIwu3KDk0O9s-rMjZpqc"
@@ -131,7 +146,6 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.refreshFitlerData), name: NSNotification.Name(rawValue:ConstantGlobal.Notifier.refreshPost), object: nil)
       
-
         getLocation()
         showAdmobInterstitial()
     }
@@ -266,6 +280,7 @@ extension ViewController
                     let postData = jsonResult!["post"] as? Dictionary<String, AnyObject>
                     
                     let postsData = postData!["posts"] as? NSArray
+                    let featuredData = postData!["featuredPosts"] as? NSArray
                     print(postsData as Any)
                     
                     self.bannerArr = []
@@ -280,6 +295,7 @@ extension ViewController
                     }
                     
                     self.postsArr = []
+                    self.featuredArr = []
                     
                     for value in postsData!
                     {
@@ -289,9 +305,20 @@ extension ViewController
                             self.postsArr.append(menu)
                         }
                     }
+                    if featuredData?.count ?? 0 > 0{
+                    for value in featuredData!
+                    {
+                        if let cuisineStr = value as? NSDictionary
+                        {
+                            let menu = PostsModel(dict: cuisineStr)
+                            self.featuredArr.append(menu)
+                        }
+                    }
+                    }
                     
                     self.bannerCollection.reloadData()
                     self.allPostCollection.reloadData()
+                    self.featuredCollection.reloadData()
                 }
                 else
                 {
@@ -322,6 +349,10 @@ extension ViewController
 
             return count
         }
+       else if collectionView == featuredCollection
+        {
+        return featuredArr.count
+        }
         else
         {
             return self.postsArr.count
@@ -333,6 +364,11 @@ extension ViewController
         if collectionView == self.bannerCollection
         {
             return CGSize(width: collectionView.frame.width, height: 200)
+        }
+        if collectionView == featuredCollection
+        {
+            let width = UIScreen.main.bounds.size.width
+            return CGSize(width: ((width / 2) - 10), height: 170.0)
         }
         else
         {
@@ -357,6 +393,31 @@ extension ViewController
 
             return cell
         }
+        if collectionView == featuredCollection
+        {
+            let cellID = "FeaturedPostCell"
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath as IndexPath) as! FeaturedPostCell
+            let replacedString = (self.featuredArr[indexPath.row].postImage).replacingOccurrences(of: " ", with: "%20")
+            let url = URL(string: replacedString)
+            cell.dealImage.sd_setImage(with: url, placeholderImage: #imageLiteral(resourceName: "place_holder"))
+            cell.dealTitle.text = self.featuredArr[indexPath.row].title
+            cell.dealPrice.text = "Rs " + self.featuredArr[indexPath.row].fixPrice
+            cell.dealTime.text = self.featuredArr[indexPath.row].desc
+
+            cell.backgroundColor = UIColor.white
+            cell.contentView.layer.cornerRadius = 10.0
+            cell.btnShare.tag = indexPath.row
+            cell.btnShare.addTarget(self, action: #selector(actnShare1), for: .touchUpInside)
+            
+//            let replacedString = (self.bannerArr[indexPath.row].image).replacingOccurrences(of: " ", with: "%20")
+//            let url = URL(string: replacedString)
+//            cell.dealImage.sd_setImage(with: url, placeholderImage: nil)
+//
+//            cell.backgroundColor = UIColor.white
+//            cell.contentView.layer.cornerRadius = 10.0
+
+            return cell
+        }
         else
         {
             let cellID = "homeViewPostCell"
@@ -371,18 +432,54 @@ extension ViewController
 
             cell.backgroundColor = UIColor.white
             cell.contentView.layer.cornerRadius = 10.0
-
+            cell.btnShare.tag = indexPath.row
+            cell.btnShare.addTarget(self, action: #selector(actnShare), for: .touchUpInside)
+            DispatchQueue.main.async {
+                self.height.constant = self.allPostCollection.contentSize.height
+               }
             return cell
         }
     }
-    
+    @objc func actnShare(sender: UIButton)
+    {
+//        var imageView = UIImage()
+//        var imageView1 = UIImageView()
+//        let replacedString = (self.postsArr[sender.tag].postImage).replacingOccurrences(of: " ", with: "%20")
+//        if replacedString != ""{
+//        let url = URL(string: replacedString)
+//       imageView1.sd_setImage(with:url, placeholderImage: #imageLiteral(resourceName: "loginBottomBg"), completed: {
+//        (image: UIImage?, error: Error?, cacheType: SDImageCacheType, imageURL: URL?) in
+//        imageView = image!
+//        })
+            let link = "https://apps.apple.com/in/app/mstoo-rent-lease-hire/id1536396175"
+           let shareItems:Array = [link]
+           let activityViewController:UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+        activityViewController.excludedActivityTypes = [UIActivity.ActivityType.print, UIActivity.ActivityType.postToWeibo, UIActivity.ActivityType.copyToPasteboard, UIActivity.ActivityType.addToReadingList, UIActivity.ActivityType.postToVimeo]
+            self.present(activityViewController, animated: true, completion: nil)
+    }
+    @objc func actnShare1(sender: UIButton)
+    {
+        let link = "https://apps.apple.com/in/app/mstoo-rent-lease-hire/id1536396175"
+       let shareItems:Array = [link]
+           let activityViewController:UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+        activityViewController.excludedActivityTypes = [UIActivity.ActivityType.print, UIActivity.ActivityType.postToWeibo, UIActivity.ActivityType.copyToPasteboard, UIActivity.ActivityType.addToReadingList, UIActivity.ActivityType.postToVimeo]
+            self.present(activityViewController, animated: true, completion: nil)
+    }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath)
     {
+        if collectionView == featuredCollection{
+            let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "DetailPageVC") as? DetailPageVC
+            vc?.singlePostData = self.featuredArr
+            vc?.rowno = indexPath.row
+            vc?.modalPresentationStyle = .fullScreen
+            self.present(vc!, animated: true, completion: nil)
+        }else{
         let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "DetailPageVC") as? DetailPageVC
         vc?.singlePostData = self.postsArr
         vc?.rowno = indexPath.row
         vc?.modalPresentationStyle = .fullScreen
         self.present(vc!, animated: true, completion: nil)
+        }
      //   self.navigationController?.pushViewController(vc!, animated: true)
         
     }

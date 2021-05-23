@@ -11,7 +11,7 @@ import UIKit
 class SideMenuVC: UIViewController
 {
     @IBOutlet weak var sideMenuTable: UITableView!
-    let arrSideMenu: [String] = ["Home", "Profile", "Change Password", "Blocked Users", "About Mstoo", "How Mstoo Works", "Contact Us", "Subscription","Logout"]
+    let arrSideMenu: [String] = ["Home", "Profile", "Change Password", "Blocked Users", "About Mstoo", "How Mstoo Works", "Contact Us", "Subscription","Featured Posts","Logout"]
     
     override func viewDidLoad()
     {
@@ -142,6 +142,10 @@ extension SideMenuVC: UITableViewDataSource, UITableViewDelegate
             self.performSegue(withIdentifier: "showSubscription", sender: nil)
         }
         else if indexPath.section == 8
+        {
+            self.performSegue(withIdentifier: "showFeature", sender: nil)
+        }
+        else if indexPath.section == 9
         {
             UserDefaults.standard.removeObject(forKey: "checkUserLogin")
             self.dismiss(animated: true, completion: nil)

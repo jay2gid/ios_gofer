@@ -85,6 +85,7 @@
 		C99D7E3024FE85F400F9DBA8 /* ProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99D7E2F24FE85F400F9DBA8 /* ProfileVC.swift */; };
 		C9DE9F482570232900CD8B7B /* Razorpay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9DE9F472570232900CD8B7B /* Razorpay.framework */; };
 		D6846254825E355296BA49C1 /* Pods_Mstoo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A51F473109DB67A68098504 /* Pods_Mstoo.framework */; };
+		DDD7DB81265A7EA10001746F /* FeaturedPostVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDD7DB80265A7EA10001746F /* FeaturedPostVC.swift */; };
 		FA09C6202656C33000752CF8 /* CellFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA09C61E2656C33000752CF8 /* CellFilter.swift */; };
 		FA09C6212656C33000752CF8 /* CellFilter.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA09C61F2656C33000752CF8 /* CellFilter.xib */; };
 		FA09C6252656C6E200752CF8 /* ViewLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA09C6232656C6E200752CF8 /* ViewLoader.swift */; };
@@ -200,6 +201,7 @@
 		C99D7E2D24FE796C00F9DBA8 /* SideMenuVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuVC.swift; sourceTree = "<group>"; };
 		C99D7E2F24FE85F400F9DBA8 /* ProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVC.swift; sourceTree = "<group>"; };
 		C9DE9F472570232900CD8B7B /* Razorpay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Razorpay.framework; path = ../Razorpay.framework; sourceTree = "<group>"; };
+		DDD7DB80265A7EA10001746F /* FeaturedPostVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturedPostVC.swift; sourceTree = "<group>"; };
 		EE2632F30926D936CC273C05 /* Pods-Mstoo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mstoo.debug.xcconfig"; path = "Target Support Files/Pods-Mstoo/Pods-Mstoo.debug.xcconfig"; sourceTree = "<group>"; };
 		FA09C61E2656C33000752CF8 /* CellFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellFilter.swift; sourceTree = "<group>"; };
 		FA09C61F2656C33000752CF8 /* CellFilter.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CellFilter.xib; sourceTree = "<group>"; };
@@ -405,6 +407,7 @@
 				C07E6BE8263324520031F85F /* ChatVC.swift */,
 				C99D7E2F24FE85F400F9DBA8 /* ProfileVC.swift */,
 				C07E6BE7263324510031F85F /* UserChatListVC.swift */,
+				DDD7DB80265A7EA10001746F /* FeaturedPostVC.swift */,
 			);
 			path = ViewControlerMS;
 			sourceTree = "<group>";
@@ -624,6 +627,7 @@
 				C07E6C2B263325E80031F85F /* NVActivityIndicatorAnimationBallClipRotatePulse.swift in Sources */,
 				C07E6C1F263325E80031F85F /* NVActivityIndicatorAnimationBallZigZagDeflect.swift in Sources */,
 				C07E6C33263325E80031F85F /* NVActivityIndicatorAnimationBallScaleRippleMultiple.swift in Sources */,
+				DDD7DB81265A7EA10001746F /* FeaturedPostVC.swift in Sources */,
 				C07E6C36263325E80031F85F /* NVActivityIndicatorAnimationBallGridPulse.swift in Sources */,
 				C07E6C4E263326820031F85F /* GeneralExtension.swift in Sources */,
 				FA09C62A2656D5F100752CF8 /* ViewCellHeader.swift in Sources */,
@@ -817,7 +821,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.0;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = E9W8T896VC;
+				DEVELOPMENT_TEAM = 39Z847S5PG;
 				ENABLE_BITCODE = NO;
 				ENABLE_TESTABILITY = NO;
 				FRAMEWORK_SEARCH_PATHS = (
