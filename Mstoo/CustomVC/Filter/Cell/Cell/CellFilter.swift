@@ -34,12 +34,10 @@ class CellFilter: UITableViewCell {
     func setCatData(cat:categoryModel) {
         self.imgIcon.setCatchImage(url: cat.image)
         self.lbltitle.text =  cat.name
-//        self.imgIcon.layer.cornerRadius = self.imgIcon.frame.width / 2
     }
     
     func setSubCatData(cat:subCategoryModel) {
         self.imgIcon.setCatchImage(url: cat.image)
         self.lbltitle.text =  cat.name
-//        self.imgIcon.layer.cornerRadius = self.imgIcon.frame.width / 2
     }
 }

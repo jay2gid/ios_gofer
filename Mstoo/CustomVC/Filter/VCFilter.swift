@@ -90,9 +90,9 @@ class VCFilter: UIViewController, UITableViewDelegate,UITableViewDataSource {
             let cell = CellFilter.commonInit()
             
             let item = helper.arrCategory[indexPath.row]
-
-            cell.lbltitle.text = item.name
-            cell.imgIcon.setCatchImage(url: item.image)
+            
+            cell.setCatData(cat: item)
+            
             cell.imgIcon.backgroundColor = ConstantGlobal.Color.Border
             cell.imgIcon.layer.cornerRadius = cell.imgIcon.frame.width / 2
             return cell
@@ -101,8 +101,7 @@ class VCFilter: UIViewController, UITableViewDelegate,UITableViewDataSource {
             
             let item = helper.arrSubCategory[indexPath.row]
 
-            cell.lbltitle.text = item.name
-            cell.imgIcon.setCatchImage(url: item.image)
+            cell.setCatData(cat: item)
             cell.imgIcon.backgroundColor = ConstantGlobal.Color.Border
             cell.imgIcon.layer.cornerRadius = cell.imgIcon.frame.width / 2
             return cell

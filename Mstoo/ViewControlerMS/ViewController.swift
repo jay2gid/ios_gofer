@@ -8,6 +8,9 @@
 
 import UIKit
 import CoreLocation
+import GoogleMobileAds
+import GooglePlacesSearchController
+import SDWebImage
 
 class BannerModel: NSObject
 {
@@ -107,7 +110,8 @@ class homeViewPostCell: UICollectionViewCell
     @IBOutlet weak var dealPrice: UILabel!
     @IBOutlet weak var dealTime: UILabel!
     @IBOutlet var btnHeart: UIButton!
-
+    @IBOutlet weak var btnShare: UIButton!
+    
     var postDetail = PostsModel()
     
     func setValues(){
@@ -133,16 +137,57 @@ class homeViewPostCell: UICollectionViewCell
                     self.btnHeart.imageTintColor(color: .red)
                 }
             }
-            
+
         }
         
     }
     
 }
 
-class ViewController: UIViewController,UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,UISearchBarDelegate,CLLocationManagerDelegate
+class FeaturedPostCell: UICollectionViewCell {
+    @IBOutlet weak var dealImage: UIImageView!
+    @IBOutlet weak var dealTitle: UILabel!
+    @IBOutlet weak var dealPrice: UILabel!
+    @IBOutlet weak var dealTime: UILabel!
+    @IBOutlet weak var btnShare: UIButton!
+    @IBOutlet var btnHeart: UIButton!
+    var postDetail = PostsModel()
+    
+    func setValues(){
+        let replacedString = (self.postDetail.postImage).replacingOccurrences(of: " ", with: "%20")
+        let url = URL(string: replacedString)
+        
+        self.dealImage.sd_setImage(with: url, placeholderImage: #imageLiteral(resourceName: "place_holder"))
+        self.dealTitle.text = postDetail.title
+        self.dealTime.text = postDetail.desc
+        self.dealPrice.text = "Rs " + postDetail.price
+        
+    }
+    
+    @IBAction func tapHeart(_ sender: Any) {
+        
+        HelperApp.shared.addToFavroite(postId: postDetail.id) { (success) in
+            if success {
+                if self.postDetail.isFavourite {
+                    self.postDetail.isFavourite = false
+                    self.btnHeart.imageTintColor(color: .gray)
+                }else{
+                    self.postDetail.isFavourite = true
+                    self.btnHeart.imageTintColor(color: .red)
+                }
+            }
+        }
+    }
+}
+
+class ViewController: UIViewController,UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,UISearchBarDelegate,CLLocationManagerDelegate,GADInterstitialDelegate,GooglePlacesAutocompleteViewControllerDelegate
 {
 
+    @IBOutlet var consftr: NSLayoutConstraint!
+    
+    @IBOutlet var lblFetures: UILabel!
+    @IBOutlet var consFeturesPost: NSLayoutConstraint!
+    
     lazy  var searchBar:UISearchBar = UISearchBar(frame: CGRect(x: 0, y: 0, width: 200, height: 20))
     var locationManager:CLLocationManager!
     var latitude : Double?
@@ -159,7 +204,19 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
 
     var bannerArr = [BannerModel]()
     var postsArr = [PostsModel]()
-
+    var featuredArr = [PostsModel]()
+    var mInterstitial: GADInterstitial!
+    let textViewRecognizer = UITapGestureRecognizer()
+    
+    @IBOutlet weak var height: NSLayoutConstraint!
+    @IBOutlet weak var featuredCollection: UICollectionView!
+    var count = Int()
+    var timer = Timer()
+    let googlePlacesKey = "AIzaSyBq16ekrXE3LHeDIwu3KDk0O9s-rMjZpqc"
+       lazy var placesSearchController: GooglePlacesSearchController = {
+       let controller = GooglePlacesSearchController(delegate: self,apiKey: googlePlacesKey,placeType: .address)
+           return controller
+       }()
     override func viewDidLoad()     {
         super.viewDidLoad()
         
@@ -170,15 +227,73 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
         searchBar.delegate = self
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.refreshFitlerData), name: NSNotification.Name(rawValue:ConstantGlobal.Notifier.refreshPost), object: nil)
-        
+      
         getLocation()
+        DispatchQueue.main.async {
+            self.showAdmobInterstitial()
+        }
+        
+    }
+    //MARK:- ---GOOGLE ADS---
+    func showAdmobInterstitial()
+    {
+            let kGoogleFullScreenAppUnitID = "ca-app-pub-3940256099942544/4411468910"
+            self.mInterstitial = GADInterstitial.init(adUnitID:kGoogleFullScreenAppUnitID )
+            mInterstitial.delegate = self
+            let Request  = GADRequest()
+      //  Request.testDevices = ["2077ef9a63d2b398840261c8221a0c9b"]
+        mInterstitial.load(Request)
+    }
+    //MARK:- -----GOOGLE PLACES----
+    func viewController(didAutocompleteWith place: PlaceDetails) {
+           print(place.description)
+           print(place.formattedAddress)
+           self.searchBar.text = place.formattedAddress
+           print(place.coordinate!.latitude)
+           print(place.countryCode)
+           print(place.postalCode)
+//           country = place.country ?? ""
+//           countryCode = place.countryCode ?? ""
+//           state = place.administrativeArea ?? ""
+//           city = place.locality ?? ""
+           latitude = (place.coordinate!.latitude)
+        longitude = (place.coordinate!.longitude)
+//          lat  = String(latitude)
+//          long  = String(longitud)
+//        latitude = location.latitude
+//        longitude = location.longitude
+     //
+          placesSearchController.isActive = false
+//        getAllPosts()
+       // self.placesSearchController.dismiss(animated: true, completion: nil)
+       }
+    override func viewDidDisappear(_ animated: Bool) {
+        timer.invalidate()
     }
     
+    
+    @objc func timerAction() {
+        if(count > 0) {
+            count -= 1
+            print("\(count) seconds to the end of the world")
+        }
+        else{
+           timer.invalidate()
+            timer.fire()
+            showAdmobInterstitial()
+            count = 180
+            timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
+        }
+    }
+
+    func interstitialDidReceiveAd(_ ad: GADInterstitial)
+    {
+        ad.present(fromRootViewController: self)
+    }
     @objc func refreshFitlerData() {
         self.postsArr = HelperFitler.shared.arryPosts
         self.allPostCollection.reloadData()
     }
-    
     
     func checkUser(){
         if let _ = UserDefaults.standard.string(forKey: "checkUserLogin")  {
@@ -198,12 +313,14 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
             {
                 locationManager.startUpdatingLocation()
             }
-        
     }
 
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
+        timer.fire()
+        count = 180
+        timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
         
         self.navigationController?.isNavigationBarHidden = false
             checkUser()
@@ -250,6 +367,7 @@ extension ViewController
                     let postData = jsonResult!["post"] as? Dictionary<String, AnyObject>
                     
                     let postsData = postData!["posts"] as? NSArray
+                    let featuredData = postData!["featuredPosts"] as? NSArray
                     print(postsData as Any)
                     
                     self.bannerArr = []
@@ -264,6 +382,7 @@ extension ViewController
                     }
                     
                     self.postsArr = []
+                    self.featuredArr = []
                     
                     for value in postsData!
                     {
@@ -273,9 +392,31 @@ extension ViewController
                             self.postsArr.append(menu)
                         }
                     }
+                    if featuredData?.count ?? 0 > 0{
+                    
+                        for value in featuredData!
+                    {
+                        if let cuisineStr = value as? NSDictionary
+                        {
+                            let menu = PostsModel(dict: cuisineStr)
+                            self.featuredArr.append(menu)
+                        }
+                    }
+                    }
+                    
+                    if self.featuredArr.count == 0 {
+                        self.consftr.constant = 0
+                        self.consFeturesPost.constant = 0
+                        self.lblFetures.isHidden = true
+                    }else{
+                        self.consftr.constant = 37
+                        self.consFeturesPost.constant = 195
+                        self.lblFetures.isHidden = false
+                    }
                     
                     self.bannerCollection.reloadData()
                     self.allPostCollection.reloadData()
+                    self.featuredCollection.reloadData()
                 }
                 else
                 {
@@ -306,6 +447,10 @@ extension ViewController
 
             return count
         }
+       else if collectionView == featuredCollection
+        {
+        return featuredArr.count
+        }
         else
         {
             return self.postsArr.count
@@ -317,6 +462,11 @@ extension ViewController
         if collectionView == self.bannerCollection
         {
             return CGSize(width: collectionView.frame.width, height: 200)
+        }
+        if collectionView == featuredCollection
+        {
+            let width = UIScreen.main.bounds.size.width
+            return CGSize(width: ((width / 2) - 10), height: 170.0)
         }
         else
         {
@@ -341,6 +491,29 @@ extension ViewController
 
             return cell
         }
+        if collectionView == featuredCollection
+        {
+            let cellID = "FeaturedPostCell"
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath as IndexPath) as! FeaturedPostCell
+
+            cell.postDetail = self.postsArr[indexPath.row]
+            cell.setValues()
+            
+            cell.backgroundColor = UIColor.white
+            cell.contentView.layer.cornerRadius = 10.0
+            
+            cell.btnShare.tag = indexPath.row
+            cell.btnShare.addTarget(self, action: #selector(actnShare1), for: .touchUpInside)
+            
+            if self.postsArr[indexPath.row].isFavourite {
+                cell.btnHeart.imageTintColor(color: UIColor.red)
+            }else{
+                cell.btnHeart.imageTintColor(color: UIColor.lightGray)
+            }
+            
+
+            return cell
+        }
         else
         {
             let cellID = "homeViewPostCell"
@@ -352,24 +525,63 @@ extension ViewController
 
             cell.backgroundColor = UIColor.white
             cell.contentView.layer.cornerRadius = 10.0
-            
+
             if self.postsArr[indexPath.row].isFavourite {
                 cell.btnHeart.imageTintColor(color: UIColor.red)
             }else{
                 cell.btnHeart.imageTintColor(color: UIColor.lightGray)
             }
             
+
+            cell.btnShare.tag = indexPath.row
+            cell.btnShare.addTarget(self, action: #selector(actnShare), for: .touchUpInside)
+            DispatchQueue.main.async {
+                self.height.constant = self.allPostCollection.contentSize.height
+               }
+
             return cell
         }
     }
-    
+    @objc func actnShare(sender: UIButton)
+    {
+//        var imageView = UIImage()
+//        var imageView1 = UIImageView()
+//        let replacedString = (self.postsArr[sender.tag].postImage).replacingOccurrences(of: " ", with: "%20")
+//        if replacedString != ""{
+//        let url = URL(string: replacedString)
+//       imageView1.sd_setImage(with:url, placeholderImage: #imageLiteral(resourceName: "loginBottomBg"), completed: {
+//        (image: UIImage?, error: Error?, cacheType: SDImageCacheType, imageURL: URL?) in
+//        imageView = image!
+//        })
+            let link = "https://apps.apple.com/in/app/mstoo-rent-lease-hire/id1536396175"
+           let shareItems:Array = [link]
+           let activityViewController:UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+        activityViewController.excludedActivityTypes = [UIActivity.ActivityType.print, UIActivity.ActivityType.postToWeibo, UIActivity.ActivityType.copyToPasteboard, UIActivity.ActivityType.addToReadingList, UIActivity.ActivityType.postToVimeo]
+            self.present(activityViewController, animated: true, completion: nil)
+    }
+    @objc func actnShare1(sender: UIButton)
+    {
+        let link = "https://apps.apple.com/in/app/mstoo-rent-lease-hire/id1536396175"
+       let shareItems:Array = [link]
+           let activityViewController:UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+        activityViewController.excludedActivityTypes = [UIActivity.ActivityType.print, UIActivity.ActivityType.postToWeibo, UIActivity.ActivityType.copyToPasteboard, UIActivity.ActivityType.addToReadingList, UIActivity.ActivityType.postToVimeo]
+            self.present(activityViewController, animated: true, completion: nil)
+    }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath)
     {
-        let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "DetailPageVC") as? DetailPageVC
-        vc?.singlePostData = self.postsArr
-        vc?.rowno = indexPath.row
-        vc?.modalPresentationStyle = .fullScreen
-        self.present(vc!, animated: true, completion: nil)
+        if collectionView == featuredCollection{
+            let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "DetailPageVC") as? DetailPageVC
+            vc?.singlePostData = self.featuredArr
+            vc?.rowno = indexPath.row
+            vc?.modalPresentationStyle = .fullScreen
+            self.present(vc!, animated: true, completion: nil)
+        }else{
+            let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "DetailPageVC") as? DetailPageVC
+            vc?.singlePostData = self.postsArr
+            vc?.rowno = indexPath.row
+            vc?.modalPresentationStyle = .fullScreen
+            self.present(vc!, animated: true, completion: nil)
+        }
      //   self.navigationController?.pushViewController(vc!, animated: true)
         
     }
@@ -409,8 +621,9 @@ extension ViewController
 {
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar)
     {
-        self.searchBar.showsCancelButton = false
-        searchBar.resignFirstResponder()
+//        self.searchBar.showsCancelButton = false
+//        searchBar.resignFirstResponder()
+        present(placesSearchController, animated: true, completion: nil)
     }
 }
 

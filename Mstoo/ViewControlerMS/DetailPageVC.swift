@@ -8,7 +8,9 @@
 
 import UIKit
 import Lightbox
-class DetailPageVC: UIViewController,UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+import GoogleMobileAds
+
+class DetailPageVC: UIViewController,UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout,GADInterstitialDelegate {
     
     struct GlobalVariable
     {
@@ -37,13 +39,15 @@ class DetailPageVC: UIViewController,UICollectionViewDelegate, UICollectionViewD
     @IBOutlet weak var subscriptionView: UIView!
     @IBOutlet weak var categoryImage: UIImageView!
     var postsArr = [PostsModel]()
-    
+    var mInterstitial: GADInterstitial!
     var bannerArr = [BannerModel]()
     var singlePostData = [PostsModel]()
     var postImages = NSArray()
     var rowno = -1
     var postDetail = PostsModel()
-    
+    var count = Int()
+    var timer = Timer()
+
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -60,6 +64,34 @@ class DetailPageVC: UIViewController,UICollectionViewDelegate, UICollectionViewD
         postDetail = singlePostData[rowno]
         allPostCollection.showsHorizontalScrollIndicator = false
         self.SimilarPosts()
+        showAdmobInterstitial()
+    }
+    @objc func timerAction() {
+        if(count > 0) {
+            count -= 1
+            print("\(count) seconds to the end of the world")
+        }
+        else{
+           timer.invalidate()
+            timer.fire()
+            showAdmobInterstitial()
+            count = 180
+            timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
+        }
+    }
+    //MARK:- ---GOOGLE ADS---
+    func showAdmobInterstitial()
+    {
+            let kGoogleFullScreenAppUnitID = "ca-app-pub-3940256099942544/4411468910"
+            self.mInterstitial = GADInterstitial.init(adUnitID:kGoogleFullScreenAppUnitID )
+            mInterstitial.delegate = self
+            let Request  = GADRequest()
+      //  Request.testDevices = ["2077ef9a63d2b398840261c8221a0c9b"]
+        mInterstitial.load(Request)
+    }
+    func interstitialDidReceiveAd(_ ad: GADInterstitial)
+    {
+        ad.present(fromRootViewController: self)
     }
     func bordershadow(smallview: UIView)
     {
@@ -70,11 +102,16 @@ class DetailPageVC: UIViewController,UICollectionViewDelegate, UICollectionViewD
         smallview.layer.shadowOpacity = 1.0
         smallview.layer.masksToBounds = false
     }
-    
+    override func viewDidDisappear(_ animated: Bool) {
+        timer.invalidate()
+    }
     override func viewWillAppear(_ animated: Bool) {
         
         super.viewWillAppear(animated)
         
+        timer.fire()
+        count = 180
+        timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
         let post = singlePostData[rowno]
         let replacedString = post.userImg
         let url = URL(string: replacedString)
@@ -314,6 +351,12 @@ extension DetailPageVC
             present(controller, animated: true, completion: nil)
             
             
+        }else{
+            let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "DetailPageVC") as? DetailPageVC
+            vc?.singlePostData = self.postsArr
+            vc?.rowno = indexPath.row
+            vc?.modalPresentationStyle = .fullScreen
+            self.present(vc!, animated: true, completion: nil)
         }
     }
 }

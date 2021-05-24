@@ -351,7 +351,7 @@ extension AddPostVC
     @IBAction func getCurrentPlace(_ sender: UIButton)
     {
         let fields: GMSPlaceField = GMSPlaceField(rawValue: UInt(GMSPlaceField.name.rawValue) |
-                                                  UInt(GMSPlaceField.placeID.rawValue))!
+                                                    UInt(GMSPlaceField.placeID.rawValue))!
         placesClient?.findPlaceLikelihoodsFromCurrentLocation(withPlaceFields: fields, callback: {
           (placeLikelihoodList: Array<GMSPlaceLikelihood>?, error: Error?) in
           if let error = error {

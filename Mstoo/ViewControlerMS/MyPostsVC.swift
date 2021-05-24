@@ -33,6 +33,9 @@ class MyPostsVC: UIViewController,UICollectionViewDataSource,UICollectionViewDel
         if postType == .favorite {
             self.btnTitle.setTitle("My Favourites", for: .normal)
         }
+         if self.postType == .feture {
+            self.btnTitle.setTitle("Fetures Post", for: .normal)
+        }
     }
     
     @IBAction func back(_ sender: Any)
@@ -40,15 +43,7 @@ class MyPostsVC: UIViewController,UICollectionViewDataSource,UICollectionViewDel
         self.dismiss(animated: true, completion: nil)
         
     }
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
+    
 
 }
 
@@ -64,6 +59,8 @@ extension MyPostsVC
             url = getMyPostsUrl
         }else if self.postType == .favorite {
             url = getFavoritePost
+        }else if self.postType == .feture {
+            url = getFavoritePost
         }
         
         ServiceHelper.request(params: userDict, method: .post, baseWebUrl:baseUrl , useToken: "no" , apiName: url , hudType: loadingIndicatorType.iLoader)
@@ -74,16 +71,18 @@ extension MyPostsVC
                 {
                     let jsonResult = response!["data"] as? Dictionary<String, AnyObject>
                     let postsData = jsonResult?["posts"] as? NSArray
-                    print(postsData as Any)
+
                     self.postsArr = []
-                    for value in postsData!
-                    {
-                        if let cuisineStr = value as? NSDictionary
-                        {
-                            let menu = PostsModel(dict: cuisineStr)
-                            self.postsArr.append(menu)
+                    
+                    if postsData?.count ?? 0 > 0 {
+                        for value in postsData! {
+                            if let cuisineStr = value as? NSDictionary {
+                                let menu = PostsModel(dict: cuisineStr)
+                                self.postsArr.append(menu)
+                            }
                         }
                     }
+                    
                     self.allPostCollection.reloadData()
                 }
                 else

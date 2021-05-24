@@ -25,7 +25,9 @@ class ProfileVC: UIViewController
     @IBOutlet weak var contactContentView: UIView!
 
     var imagePicker:UIImagePickerController!
-
+    @IBOutlet var btnBack: UIButton!
+    
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -36,6 +38,8 @@ class ProfileVC: UIViewController
         self.userContentView.layer.borderWidth = 1.0
         self.userContentView.layer.borderColor = UIColor.clear.cgColor
         self.userContentView.layer.masksToBounds = true
+        
+        btnBack.imageTintColor(color: .black)
 
 //        userContentView.dropShadow(color: .lightGray, opacity: 1.0, offSet: CGSize(width: 8, height: 1), radius: 10, scale: true)
 //        emailContentView.dropShadow(color: .lightGray, opacity: 1.0, offSet: CGSize(width: 8, height: 1), radius: 10, scale: true)
